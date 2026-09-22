@@ -105,6 +105,80 @@
   @media (prefers-reduced-motion: reduce){
     .flor-carga{ animation-duration: 2s; }
   }
+
+  /* ---------------------------------------------------
+     Modo regalo: pantalla de apertura floral antes del viaje
+     --------------------------------------------------- */
+  #pantallaRegalo{
+    position:fixed; inset:0; z-index: 21;
+    background: radial-gradient(circle at 50% 22%, #241a08 0%, #05040f 68%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:12px; padding: 24px;
+    text-align:center;
+    transition: opacity .6s ease, visibility .6s;
+  }
+  #pantallaRegalo.oculto{ opacity:0; visibility:hidden; pointer-events:none; }
+
+  .regalo-flor{
+    position:absolute;
+    font-size: clamp(1.6rem, 6vw, 2.3rem);
+    opacity:.85;
+    filter: drop-shadow(0 0 10px rgba(255,201,60,.5));
+    animation: flotarFlorRegalo 5s ease-in-out infinite;
+  }
+  @keyframes flotarFlorRegalo{
+    0%,100%{ transform: translateY(0) rotate(0deg); }
+    50%{ transform: translateY(-14px) rotate(8deg); }
+  }
+
+  .regalo-caja{
+    font-size: clamp(3rem, 15vw, 4.6rem);
+    filter: drop-shadow(0 0 18px rgba(255,201,60,.6));
+    animation: bamboleoCaja 2.6s ease-in-out infinite;
+  }
+  @keyframes bamboleoCaja{
+    0%,100%{ transform: rotate(-4deg); }
+    50%{ transform: rotate(4deg); }
+  }
+
+  .regalo-titulo{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size: clamp(2rem, 8vw, 3rem);
+    color:#FFE9A8;
+    text-shadow: 0 0 16px rgba(255,201,60,.7);
+    margin:6px 0 0;
+    line-height:1.15;
+  }
+
+  .regalo-sub{
+    font-family:'Fredoka', sans-serif;
+    color:#F3E6C9;
+    opacity:.85;
+    font-size: .95rem;
+    margin: 0 0 10px;
+  }
+
+  .regalo-boton{
+    font-family:'Fredoka', sans-serif;
+    font-size: 1rem;
+    color:#05040f;
+    background: linear-gradient(135deg,#FFE9A8,#FFC93C);
+    border:none;
+    padding: 14px 28px;
+    border-radius: 999px;
+    box-shadow: 0 0 22px rgba(255,201,60,.55);
+    cursor:pointer;
+    animation: pulsoBotonRegalo 1.8s ease-in-out infinite;
+  }
+  @keyframes pulsoBotonRegalo{
+    0%,100%{ transform: scale(1); }
+    50%{ transform: scale(1.045); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .regalo-flor, .regalo-caja, .regalo-boton{ animation: none; }
+  }
 </style>
 </head>
 <body>
@@ -112,6 +186,17 @@
 <div id="carga">
   <div class="flor-carga"></div>
   <p>armando tu galaxia…</p>
+</div>
+
+<div id="pantallaRegalo" class="oculto">
+  <span class="regalo-flor" style="top:8%; left:8%;">🌻</span>
+  <span class="regalo-flor" style="top:10%; right:10%; animation-delay:.6s;">🌼</span>
+  <span class="regalo-flor" style="bottom:12%; left:12%; animation-delay:1.1s;">🌸</span>
+  <span class="regalo-flor" style="bottom:9%; right:9%; animation-delay:1.6s;">🌻</span>
+  <div class="regalo-caja">📦</div>
+  <h1 class="regalo-titulo">Un paquete para<br>Daniela</h1>
+  <p class="regalo-sub">envuelto entre flores, con todo mi cariño 🌷</p>
+  <button class="regalo-boton" id="botonRegalo" type="button">Toca para abrir tu regalo</button>
 </div>
 
 <canvas id="escena"></canvas>
@@ -128,6 +213,8 @@
 
   const canvas = document.getElementById('escena');
   const capaCarga = document.getElementById('carga');
+  const pantallaRegalo = document.getElementById('pantallaRegalo');
+  const botonRegalo = document.getElementById('botonRegalo');
   const elTitulo = document.getElementById('titulo');
   const elPista = document.getElementById('pista');
   const botonMusica = document.getElementById('botonMusica');
@@ -1158,7 +1245,12 @@
   function iniciar(){
     requestAnimationFrame(()=>{
       capaCarga.classList.add('oculto');
+      pantallaRegalo.classList.remove('oculto');
     });
+  }
+
+  function comenzarViaje(){
+    pantallaRegalo.classList.add('oculto');
     animar();
     iniciarViaje(()=>{
       elTitulo.classList.add('mostrar');
@@ -1166,6 +1258,8 @@
       setTimeout(()=> elPista.classList.add('ocultar'), 5200);
     });
   }
+
+  botonRegalo.addEventListener('click', comenzarViaje);
 
   if(document.fonts && document.fonts.ready){
     document.fonts.load("600 62px 'Caveat'").then(()=> document.fonts.ready).then(iniciar).catch(iniciar);
